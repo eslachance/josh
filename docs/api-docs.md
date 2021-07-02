@@ -26,8 +26,8 @@
         * [.find(pathOrFn, predicate)](#Josh+find) ⇒ <code>Promise.&lt;Object&gt;</code>
         * [.filter(pathOrFn, predicate)](#Josh+filter) ⇒ <code>Promise.&lt;Object&gt;</code>
         * [.map(pathOrFn)](#Josh+map) ⇒ <code>Promise.&lt;Array.&lt;\*&gt;&gt;</code>
-        * [.includes(keyOrPath, value)](#Josh+includes) ⇒ <code>boolean</code>
-        * [.some(pathOrFn, value)](#Josh+some) ⇒ <code>boolean</code>
+        * [.includes(keyOrPath, value)](#Josh+includes) ⇒ <code>Promise.&lt;boolean&gt;</code>
+        * [.some(pathOrFn, value)](#Josh+some) ⇒ <code>Promise.&lt;boolean&gt;</code>
         * [.every(pathOrFn, value)](#Josh+every) ⇒ <code>boolean</code>
         * [.math(keyOrPath, operation, operand, path)](#Josh+math) ⇒ [<code>Promise.&lt;Josh&gt;</code>](#Josh)
         * [.autoId()](#Josh+autoId) ⇒ <code>Promise.&lt;string&gt;</code>
@@ -242,7 +242,7 @@ josh.has("mykey"); // always returns true
 josh.get("mykey", "here") // returns "as an example";
 
 // Get the default value back in a variable:
-const settings = mySettings.ensure("1234567890", defaultSettings);
+const settings = await mySettings.ensure("1234567890", defaultSettings);
 console.log(settings) // josh's value for "1234567890" if it exists, otherwise the defaultSettings value.
 ```
 <a name="Josh+delete"></a>
@@ -409,12 +409,12 @@ Note that using functions here currently is very inefficient, so it's suggested 
 
 <a name="Josh+includes"></a>
 
-### josh.includes(keyOrPath, value) ⇒ <code>boolean</code>
+### josh.includes(keyOrPath, value) ⇒ <code>Promise.&lt;boolean&gt;</code>
 Performs Array.includes() on a certain value. Works similarly to
 [Array.includes()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes).
 
 **Kind**: instance method of [<code>Josh</code>](#josh)  
-**Returns**: <code>boolean</code> - Whether the value is included in the array.  
+**Returns**: <code>Promise.&lt;boolean&gt;</code> - Whether the value is included in the array.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -431,11 +431,11 @@ josh.includes('arr', val => val.foo === 'bar'); // true
 ```
 <a name="Josh+some"></a>
 
-### josh.some(pathOrFn, value) ⇒ <code>boolean</code>
+### josh.some(pathOrFn, value) ⇒ <code>Promise.&lt;boolean&gt;</code>
 Checks whether *at least one key* contains the expected value. The loop stops once the value is found.
 
 **Kind**: instance method of [<code>Josh</code>](#josh)  
-**Returns**: <code>boolean</code> - Whether the value was found or not (if one of the rows in the database match the value at path, or the function has returned true)  
+**Returns**: <code>Promise.&lt;boolean&gt;</code> - Whether the value was found or not (if one of the rows in the database match the value at path, or the function has returned true)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -453,7 +453,7 @@ Checks whether *every single key* contains the expected value. Identical to josh
 | Param | Type | Description |
 | --- | --- | --- |
 | pathOrFn | <code>\*</code> | Either a function, or the full path to the value to check against the provided value. If using a path, the value at he path will be compared to the value provided as a second argument. If using a function, the function is given the *full* value for each key, along with the key itself, for each row in the database. It should return `true` if your match is found. |
-| value | <code>string</code> \| <code>number</code> \| <code>boolean</code> \| <code>null</code> | The value to be checked at each path. Cannot be an object or array (use a function for those). |
+| value | <code>Promise.&lt;(string\|number\|boolean\|null)&gt;</code> | The value to be checked at each path. Cannot be an object or array (use a function for those). |
 
 <a name="Josh+math"></a>
 
@@ -548,7 +548,7 @@ Initialize multiple Josh instances easily. Used to simplify the creation of many
 **Example**  
 ```js
 // Using local variables.
-const Josh = require('josh');
+const Josh = require('@joshdb/core');
 const provider = require("@joshdb/sqlite");
 const { settings, tags, blacklist } = Josh.multi(['settings', 'tags', 'blacklist'], { provider });
 
